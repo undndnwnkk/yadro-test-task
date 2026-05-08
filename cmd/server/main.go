@@ -1,9 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/undndnwnkk/yadro-test-task/internal/dns"
 )
@@ -11,10 +16,37 @@ import (
 var service = dns.NewService("/etc/resolv.conf")
 
 func main() {
-	http.HandleFunc("/dns", dnsHandler)
-	log.Println("Server starting on :8080...")
+	mux := http.NewServeMux()
+	mux.HandleFunc("/dns", dnsHandler)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: mux,
+	}
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		log.Println("Server starting on :8080...")
+
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Listen error: %s\n", err)
+		}
+	}()
+
+	log.Println("Press Ctrl+C to stop")
+
+	<-done
+	log.Println("Server is shutting down")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("Server shutdown failed:%+v", err)
+	}
+	log.Println("Server exited properly")
 }
 
 func dnsHandler(w http.ResponseWriter, r *http.Request) {

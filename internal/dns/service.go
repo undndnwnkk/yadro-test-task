@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"strings"
 )
@@ -44,6 +45,10 @@ func (s *Service) GetServers() ([]string, error) {
 
 func (s *Service) AddServer(ip string) error {
 	log.Printf("DEBUG: Attempting to add DNS server: %s", ip)
+	if net.ParseIP(ip) == nil {
+		return fmt.Errorf("invalid IP address format: %s", ip)
+	}
+
 	servers, err := s.GetServers()
 	if err != nil {
 		return err
