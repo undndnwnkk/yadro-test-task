@@ -27,14 +27,14 @@ func main() {
 	case "list":
 		listServers()
 	case "add":
-		addCmd.Parse(os.Args[2:])
+		_ = addCmd.Parse(os.Args[2:])
 		if *addIP == "" {
 			addCmd.Usage()
 			return
 		}
 		sendRequest("POST", *addIP)
 	case "remove":
-		removeCmd.Parse(os.Args[2:])
+		_ = removeCmd.Parse(os.Args[2:])
 		if *removeIP == "" {
 			removeCmd.Usage()
 			return
@@ -57,10 +57,13 @@ func printHelp() {
 }
 
 func listServers() {
-	response, _ := http.Get(serverURL)
+	response, err := http.Get(serverURL)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
 	defer response.Body.Close()
 
-	io.Copy(os.Stdout, response.Body)
+	_, _ = io.Copy(os.Stdout, response.Body)
 	fmt.Println()
 }
 

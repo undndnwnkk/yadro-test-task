@@ -25,6 +25,12 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(CLIENT_NAME)
 
+lint: 
+	golangci-lint run
+
+ci-local: lint test build
+	@echo "Local CI passed successfully"
+
 help:
 	@echo "Commands for production mode (/etc/resolv.conf):"
 	@echo " 	make build 	- Build binary files"

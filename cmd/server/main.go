@@ -59,7 +59,7 @@ func dnsHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 500)
 			return
 		}
-		json.NewEncoder(w).Encode(list)
+		_ = json.NewEncoder(w).Encode(list)
 	case http.MethodPost:
 		var request struct {
 			IP string `json:"ip"`

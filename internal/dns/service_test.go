@@ -7,7 +7,7 @@ import (
 
 func TestDNSGet(t *testing.T) {
 	tempFile := "test_resolv.conf"
-	os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
+	_ = os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
 	defer os.Remove(tempFile)
 
 	service := NewService(tempFile)
@@ -20,12 +20,12 @@ func TestDNSGet(t *testing.T) {
 
 func TestDNSAdd(t *testing.T) {
 	tempFile := "test_resolv.conf"
-	os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
+	_ = os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
 	defer os.Remove(tempFile)
 
 	service := NewService(tempFile)
 
-	service.AddServer("1.1.1.1")
+	_ = service.AddServer("1.1.1.1")
 	servers, _ := service.GetServers()
 	if len(servers) != 2 {
 		t.Error("failed to add server")
@@ -34,12 +34,12 @@ func TestDNSAdd(t *testing.T) {
 
 func TestDNSRemove(t *testing.T) {
 	tempFile := "test_resolv.conf"
-	os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
+	_ = os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
 	defer os.Remove(tempFile)
 
 	service := NewService(tempFile)
 
-	service.RemoveServer("8.8.8.8")
+	_ = service.RemoveServer("8.8.8.8")
 	servers, _ := service.GetServers()
 	if len(servers) != 0 {
 		t.Error("failed to remove server")
