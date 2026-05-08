@@ -79,7 +79,7 @@ func (s *Service) RemoveServer(ip string) error {
 	for scanner.Scan() {
 		currentLine := scanner.Text()
 
-		if strings.TrimSpace(line) == "nameserver " + ip {
+		if strings.TrimSpace(currentLine) == "nameserver "+ip {
 			isFound = true
 			continue
 		}
@@ -92,6 +92,5 @@ func (s *Service) RemoveServer(ip string) error {
 		return fmt.Errorf("server %s not found", ip)
 	}
 
-	return os.WriteFile(s.ConfigPath, []byte(strings.Join(lines, "\n") + "\n"), 0644)
+	return os.WriteFile(s.ConfigPath, []byte(strings.Join(lines, "\n")+"\n"), 0644)
 }
-
