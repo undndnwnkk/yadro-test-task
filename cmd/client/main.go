@@ -61,7 +61,12 @@ func listServers() {
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 	}
-	defer response.Body.Close()
+	defer func() {
+		closeErr := response.Body.Close()
+		if err == nil {
+			err = closeErr
+		}
+	}()
 
 	_, _ = io.Copy(os.Stdout, response.Body)
 	fmt.Println()

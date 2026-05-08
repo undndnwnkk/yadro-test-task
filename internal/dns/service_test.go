@@ -8,7 +8,9 @@ import (
 func TestDNSGet(t *testing.T) {
 	tempFile := "test_resolv.conf"
 	_ = os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
-	defer os.Remove(tempFile)
+	defer func() {
+		_ = os.Remove(tempFile)
+	}()
 
 	service := NewService(tempFile)
 
@@ -21,7 +23,9 @@ func TestDNSGet(t *testing.T) {
 func TestDNSAdd(t *testing.T) {
 	tempFile := "test_resolv.conf"
 	_ = os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
-	defer os.Remove(tempFile)
+	defer func() {
+		_ = os.Remove(tempFile)
+	}()
 
 	service := NewService(tempFile)
 
@@ -35,7 +39,9 @@ func TestDNSAdd(t *testing.T) {
 func TestDNSRemove(t *testing.T) {
 	tempFile := "test_resolv.conf"
 	_ = os.WriteFile(tempFile, []byte("nameserver 8.8.8.8\n"), 0644)
-	defer os.Remove(tempFile)
+	defer func() {
+		_ = os.Remove(tempFile)
+	}()
 
 	service := NewService(tempFile)
 
