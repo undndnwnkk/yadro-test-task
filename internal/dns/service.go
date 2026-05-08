@@ -24,7 +24,12 @@ func (s *Service) GetServers() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		closeErr := file.Close()
+		if err == nil {
+			err = closeErr
+		}
+	}()
 
 	var servers []string
 	scanner := bufio.NewScanner(file)
@@ -64,9 +69,14 @@ func (s *Service) AddServer(ip string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		closeErr := file.Close()
+		if err == nil {
+			err = closeErr
+		}
+	}()
 
-	_, err = file.WriteString(fmt.Sprintf("nameserver %s\n", ip))
+	_, err = fmt.Fprintf(file, "nameserver %s\n", ip)
 	return err
 }
 
@@ -91,7 +101,7 @@ func (s *Service) RemoveServer(ip string) error {
 
 		lines = append(lines, currentLine)
 	}
-	file.Close()
+	_ = file.Close()
 
 	if !isFound {
 		return fmt.Errorf("server %s not found", ip)
